@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="An interactive Conway's Game of Life simulator you can play and share in your browser." />
+  <meta name="theme-color" content="#10131a" />
+  <title>Conway's Game of Life</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">CELLULAR AUTOMATON</p>
+        <h1>Conway's Game of Life</h1>
+        <p class="subtitle">Draw a pattern, press play, and watch simple rules create complex behavior.</p>
+      </div>
+      <a class="github-link" href="https://github.com/" target="_blank" rel="noreferrer">View on GitHub</a>
+    </header>
+
+    <section class="stats" aria-label="Simulation statistics">
+      <div><span>Generation</span><strong id="generation">0</strong></div>
+      <div><span>Population</span><strong id="population">0</strong></div>
+      <div><span>Grid</span><strong id="gridLabel">50 × 36</strong></div>
+    </section>
+
+    <section class="workspace">
+      <aside class="control-panel" aria-label="Game controls">
+        <div class="button-row primary-actions">
+          <button id="playButton" class="button button-primary" type="button">▶ Play</button>
+          <button id="stepButton" class="button" type="button">Step</button>
+        </div>
+
+        <div class="button-row">
+          <button id="randomButton" class="button" type="button">Random</button>
+          <button id="clearButton" class="button button-danger" type="button">Clear</button>
+        </div>
+
+        <label class="control-group" for="speedRange">
+          <span><strong>Speed</strong><output id="speedOutput">8 generations/sec</output></span>
+          <input id="speedRange" type="range" min="1" max="20" value="8" />
+        </label>
+
+        <label class="control-group" for="gridRange">
+          <span><strong>Grid width</strong><output id="gridOutput">50 cells</output></span>
+          <input id="gridRange" type="range" min="20" max="100" step="5" value="50" />
+        </label>
+
+        <label class="toggle-row" for="wrapToggle">
+          <span>
+            <strong>Wrap edges</strong>
+            <small>Cells can cross from one edge to the opposite edge.</small>
+          </span>
+          <input id="wrapToggle" type="checkbox" checked />
+        </label>
+
+        <div class="control-group">
+          <label for="patternSelect"><strong>Classic pattern</strong></label>
+          <div class="select-row">
+            <select id="patternSelect">
+              <option value="glider">Glider</option>
+              <option value="blinker">Blinker</option>
+              <option value="toad">Toad</option>
+              <option value="beacon">Beacon</option>
+              <option value="pulsar">Pulsar</option>
+              <option value="gosper">Gosper glider gun</option>
+            </select>
+            <button id="loadPatternButton" class="button" type="button">Load</button>
+          </div>
+        </div>
+
+        <button id="shareButton" class="button button-wide" type="button">Copy shareable board link</button>
+        <p id="shareStatus" class="status" role="status" aria-live="polite"></p>
+
+        <details class="rules">
+          <summary>How the rules work</summary>
+          <ol>
+            <li>A live cell with 2 or 3 neighbors survives.</li>
+            <li>A dead cell with exactly 3 neighbors becomes alive.</li>
+            <li>Every other cell becomes or remains dead.</li>
+          </ol>
+        </details>
+      </aside>
+
+      <section class="board-card" aria-label="Game board">
+        <canvas id="gameCanvas" aria-label="Interactive Game of Life grid"></canvas>
+        <div class="canvas-help">Click or drag to draw · Right-click or Shift-drag to erase · Space to play/pause</div>
+      </section>
+    </section>
+
+    <footer>
+      <p>Built with vanilla HTML, CSS, and JavaScript. No account or installation required.</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
