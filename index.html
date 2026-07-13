@@ -6,7 +6,294 @@
   <meta name="description" content="An interactive Conway's Game of Life simulator you can play and share in your browser." />
   <meta name="theme-color" content="#10131a" />
   <title>Conway's Game of Life</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0d12;
+  --surface: #131722;
+  --surface-2: #1a2030;
+  --border: #2a3246;
+  --text: #f4f7ff;
+  --muted: #aab4c9;
+  --accent: #69f0ae;
+  --accent-strong: #35d98a;
+  --danger: #ff6b7a;
+  --shadow: 0 20px 55px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html { min-width: 320px; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(62, 119, 255, 0.15), transparent 28rem),
+    radial-gradient(circle at 90% 12%, rgba(105, 240, 174, 0.11), transparent 26rem),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button, input, select { font: inherit; }
+button, select, input[type="range"], input[type="checkbox"] { cursor: pointer; }
+
+.app-shell {
+  width: min(1380px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 36px 0 24px;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4.3rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.subtitle {
+  max-width: 700px;
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+}
+
+.github-link {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  text-decoration: none;
+  background: rgba(19, 23, 34, 0.75);
+}
+
+.github-link:hover { border-color: var(--accent); }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.stats > div {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(19, 23, 34, 0.78);
+}
+
+.stats span {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stats strong { font-size: 1.25rem; }
+
+.workspace {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.control-panel,
+.board-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(19, 23, 34, 0.9);
+  box-shadow: var(--shadow);
+}
+
+.control-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.button {
+  min-height: 42px;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--surface-2);
+  font-weight: 750;
+}
+
+.button:hover { border-color: #53617d; transform: translateY(-1px); }
+.button:active { transform: translateY(0); }
+.button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid rgba(105, 240, 174, 0.3); outline-offset: 2px; }
+
+.button-primary {
+  color: #08150f;
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.button-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+.button-danger { color: #ffdce0; }
+.button-danger:hover { border-color: var(--danger); }
+.button-wide { width: 100%; }
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-group > span,
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+output, small, .status { color: var(--muted); }
+output { font-size: 0.84rem; }
+
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
+
+.toggle-row {
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #10141e;
+}
+
+.toggle-row span { display: flex; flex-direction: column; gap: 3px; }
+.toggle-row small { line-height: 1.3; }
+
+.select-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+select {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.status {
+  min-height: 20px;
+  margin: -6px 0 0;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.rules {
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.rules summary { color: var(--text); font-weight: 700; cursor: pointer; }
+.rules ol { margin-bottom: 0; padding-left: 20px; }
+.rules li + li { margin-top: 6px; }
+
+.board-card {
+  position: relative;
+  min-height: 620px;
+  overflow: hidden;
+  background: #090c12;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 620px;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.canvas-help {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100% - 24px);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: #c5ccda;
+  background: rgba(6, 8, 12, 0.78);
+  backdrop-filter: blur(8px);
+  font-size: 0.78rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+footer {
+  padding: 18px 4px 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .workspace { grid-template-columns: 1fr; }
+  .control-panel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .rules { margin-top: 0; }
+  .board-card, canvas { min-height: 520px; }
+}
+
+@media (max-width: 620px) {
+  .app-shell { width: min(100% - 20px, 1380px); padding-top: 22px; }
+  .hero { flex-direction: column; }
+  .github-link { display: none; }
+  .stats { grid-template-columns: 1fr 1fr 1fr; }
+  .stats > div { padding: 10px; }
+  .stats strong { font-size: 1rem; }
+  .control-panel { display: flex; }
+  .board-card, canvas { min-height: 480px; }
+  .canvas-help { border-radius: 12px; line-height: 1.3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}
+
+  </style>
 </head>
 <body>
   <main class="app-shell">
@@ -94,6 +381,407 @@
     </footer>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+"use strict";
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d", { alpha: false });
+
+const elements = {
+  playButton: document.getElementById("playButton"),
+  stepButton: document.getElementById("stepButton"),
+  clearButton: document.getElementById("clearButton"),
+  randomButton: document.getElementById("randomButton"),
+  speedRange: document.getElementById("speedRange"),
+  speedOutput: document.getElementById("speedOutput"),
+  gridRange: document.getElementById("gridRange"),
+  gridOutput: document.getElementById("gridOutput"),
+  gridLabel: document.getElementById("gridLabel"),
+  generation: document.getElementById("generation"),
+  population: document.getElementById("population"),
+  wrapToggle: document.getElementById("wrapToggle"),
+  patternSelect: document.getElementById("patternSelect"),
+  loadPatternButton: document.getElementById("loadPatternButton"),
+  shareButton: document.getElementById("shareButton"),
+  shareStatus: document.getElementById("shareStatus"),
+};
+
+const PATTERNS = {
+  glider: [[1, 0], [2, 1], [0, 2], [1, 2], [2, 2]],
+  blinker: [[0, 0], [1, 0], [2, 0]],
+  toad: [[1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1]],
+  beacon: [[0, 0], [1, 0], [0, 1], [1, 1], [2, 2], [3, 2], [2, 3], [3, 3]],
+  pulsar: [
+    [2,0],[3,0],[4,0],[8,0],[9,0],[10,0],
+    [0,2],[5,2],[7,2],[12,2],[0,3],[5,3],[7,3],[12,3],[0,4],[5,4],[7,4],[12,4],
+    [2,5],[3,5],[4,5],[8,5],[9,5],[10,5],
+    [2,7],[3,7],[4,7],[8,7],[9,7],[10,7],
+    [0,8],[5,8],[7,8],[12,8],[0,9],[5,9],[7,9],[12,9],[0,10],[5,10],[7,10],[12,10],
+    [2,12],[3,12],[4,12],[8,12],[9,12],[10,12]
+  ],
+  gosper: [
+    [0,4],[0,5],[1,4],[1,5],
+    [10,4],[10,5],[10,6],[11,3],[11,7],[12,2],[12,8],[13,2],[13,8],[14,5],[15,3],[15,7],[16,4],[16,5],[16,6],[17,5],
+    [20,2],[20,3],[20,4],[21,2],[21,3],[21,4],[22,1],[22,5],[24,0],[24,1],[24,5],[24,6],
+    [34,2],[34,3],[35,2],[35,3]
+  ]
+};
+
+let columns = Number(elements.gridRange.value);
+let rows = 36;
+let board = createBoard(columns, rows);
+let generation = 0;
+let running = false;
+let generationsPerSecond = Number(elements.speedRange.value);
+let lastFrameTime = 0;
+let accumulatedTime = 0;
+let drawing = false;
+let drawValue = 1;
+let previousDrawnCell = null;
+let cellWidth = 1;
+let cellHeight = 1;
+
+function createBoard(cols, rowCount) {
+  return new Uint8Array(cols * rowCount);
+}
+
+function indexOf(x, y) {
+  return y * columns + x;
+}
+
+function resizeCanvas() {
+  const rect = canvas.getBoundingClientRect();
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = Math.round(rect.width * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  rows = Math.max(16, Math.round(columns * (rect.height / rect.width)));
+  const previous = board;
+  const previousColumns = Number(canvas.dataset.columns || columns);
+  const previousRows = Number(canvas.dataset.rows || rows);
+  const resized = createBoard(columns, rows);
+
+  const copyWidth = Math.min(columns, previousColumns);
+  const copyHeight = Math.min(rows, previousRows);
+  const xOffsetNew = Math.floor((columns - copyWidth) / 2);
+  const yOffsetNew = Math.floor((rows - copyHeight) / 2);
+  const xOffsetOld = Math.floor((previousColumns - copyWidth) / 2);
+  const yOffsetOld = Math.floor((previousRows - copyHeight) / 2);
+
+  for (let y = 0; y < copyHeight; y += 1) {
+    for (let x = 0; x < copyWidth; x += 1) {
+      const oldIndex = (y + yOffsetOld) * previousColumns + (x + xOffsetOld);
+      const newIndex = (y + yOffsetNew) * columns + (x + xOffsetNew);
+      if (oldIndex >= 0 && oldIndex < previous.length) resized[newIndex] = previous[oldIndex];
+    }
+  }
+
+  board = resized;
+  canvas.dataset.columns = String(columns);
+  canvas.dataset.rows = String(rows);
+  cellWidth = rect.width / columns;
+  cellHeight = rect.height / rows;
+  updateStats();
+  draw();
+}
+
+function countNeighbors(x, y) {
+  let count = 0;
+  const wrap = elements.wrapToggle.checked;
+
+  for (let dy = -1; dy <= 1; dy += 1) {
+    for (let dx = -1; dx <= 1; dx += 1) {
+      if (dx === 0 && dy === 0) continue;
+      let nx = x + dx;
+      let ny = y + dy;
+
+      if (wrap) {
+        nx = (nx + columns) % columns;
+        ny = (ny + rows) % rows;
+      } else if (nx < 0 || nx >= columns || ny < 0 || ny >= rows) {
+        continue;
+      }
+
+      count += board[indexOf(nx, ny)];
+    }
+  }
+  return count;
+}
+
+function step() {
+  const next = createBoard(columns, rows);
+
+  for (let y = 0; y < rows; y += 1) {
+    for (let x = 0; x < columns; x += 1) {
+      const currentIndex = indexOf(x, y);
+      const neighbors = countNeighbors(x, y);
+      const alive = board[currentIndex] === 1;
+      next[currentIndex] = alive ? Number(neighbors === 2 || neighbors === 3) : Number(neighbors === 3);
+    }
+  }
+
+  board = next;
+  generation += 1;
+  updateStats();
+  draw();
+}
+
+function draw() {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  ctx.fillStyle = "#090c12";
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.fillStyle = "#69f0ae";
+  for (let y = 0; y < rows; y += 1) {
+    for (let x = 0; x < columns; x += 1) {
+      if (!board[indexOf(x, y)]) continue;
+      const inset = Math.max(0.7, Math.min(cellWidth, cellHeight) * 0.08);
+      ctx.fillRect(
+        x * cellWidth + inset,
+        y * cellHeight + inset,
+        Math.max(1, cellWidth - inset * 2),
+        Math.max(1, cellHeight - inset * 2)
+      );
+    }
+  }
+
+  if (cellWidth >= 8) {
+    ctx.beginPath();
+    ctx.strokeStyle = "rgba(138, 158, 194, 0.12)";
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= columns; x += 1) {
+      const px = Math.round(x * cellWidth) + 0.5;
+      ctx.moveTo(px, 0);
+      ctx.lineTo(px, height);
+    }
+    for (let y = 0; y <= rows; y += 1) {
+      const py = Math.round(y * cellHeight) + 0.5;
+      ctx.moveTo(0, py);
+      ctx.lineTo(width, py);
+    }
+    ctx.stroke();
+  }
+}
+
+function updateStats() {
+  let population = 0;
+  for (const cell of board) population += cell;
+  elements.generation.textContent = generation.toLocaleString();
+  elements.population.textContent = population.toLocaleString();
+  elements.gridLabel.textContent = `${columns} × ${rows}`;
+}
+
+function setRunning(value) {
+  running = value;
+  elements.playButton.textContent = running ? "❚❚ Pause" : "▶ Play";
+  elements.playButton.setAttribute("aria-pressed", String(running));
+  accumulatedTime = 0;
+}
+
+function animationLoop(timestamp) {
+  if (!lastFrameTime) lastFrameTime = timestamp;
+  const elapsed = Math.min(timestamp - lastFrameTime, 250);
+  lastFrameTime = timestamp;
+
+  if (running) {
+    accumulatedTime += elapsed;
+    const interval = 1000 / generationsPerSecond;
+    while (accumulatedTime >= interval) {
+      step();
+      accumulatedTime -= interval;
+    }
+  }
+
+  requestAnimationFrame(animationLoop);
+}
+
+function clearBoard() {
+  board.fill(0);
+  generation = 0;
+  setRunning(false);
+  updateStats();
+  draw();
+}
+
+function randomizeBoard() {
+  generation = 0;
+  setRunning(false);
+  for (let i = 0; i < board.length; i += 1) board[i] = Math.random() < 0.23 ? 1 : 0;
+  updateStats();
+  draw();
+}
+
+function loadPattern(name) {
+  clearBoard();
+  const pattern = PATTERNS[name];
+  const maxX = Math.max(...pattern.map(([x]) => x));
+  const maxY = Math.max(...pattern.map(([, y]) => y));
+  const startX = Math.max(0, Math.floor((columns - maxX - 1) / 2));
+  const startY = Math.max(0, Math.floor((rows - maxY - 1) / 2));
+
+  for (const [x, y] of pattern) {
+    const targetX = startX + x;
+    const targetY = startY + y;
+    if (targetX < columns && targetY < rows) board[indexOf(targetX, targetY)] = 1;
+  }
+  updateStats();
+  draw();
+}
+
+function pointToCell(event) {
+  const rect = canvas.getBoundingClientRect();
+  const x = Math.floor((event.clientX - rect.left) / cellWidth);
+  const y = Math.floor((event.clientY - rect.top) / cellHeight);
+  if (x < 0 || x >= columns || y < 0 || y >= rows) return null;
+  return { x, y };
+}
+
+function paintCell(event) {
+  const cell = pointToCell(event);
+  if (!cell) return;
+  const key = `${cell.x},${cell.y}`;
+  if (key === previousDrawnCell) return;
+  board[indexOf(cell.x, cell.y)] = drawValue;
+  previousDrawnCell = key;
+  generation = 0;
+  updateStats();
+  draw();
+}
+
+function encodeBoard() {
+  const liveCells = [];
+  for (let i = 0; i < board.length; i += 1) {
+    if (board[i]) liveCells.push(i.toString(36));
+  }
+  return `${columns}x${rows}:${liveCells.join(".")}`;
+}
+
+function decodeBoard(value) {
+  const match = value.match(/^(\d+)x(\d+):(.*)$/);
+  if (!match) return false;
+  const decodedColumns = Number(match[1]);
+  const decodedRows = Number(match[2]);
+  if (decodedColumns < 10 || decodedColumns > 150 || decodedRows < 10 || decodedRows > 150) return false;
+
+  columns = decodedColumns;
+  rows = decodedRows;
+  elements.gridRange.value = String(Math.min(100, Math.max(20, Math.round(columns / 5) * 5)));
+  elements.gridOutput.textContent = `${columns} cells`;
+  board = createBoard(columns, rows);
+
+  if (match[3]) {
+    for (const token of match[3].split(".")) {
+      const position = parseInt(token, 36);
+      if (Number.isInteger(position) && position >= 0 && position < board.length) board[position] = 1;
+    }
+  }
+
+  canvas.dataset.columns = String(columns);
+  canvas.dataset.rows = String(rows);
+  generation = 0;
+  updateStats();
+  draw();
+  return true;
+}
+
+async function copyShareLink() {
+  const url = new URL(window.location.href);
+  url.hash = encodeBoard();
+  const text = url.toString();
+
+  try {
+    await navigator.clipboard.writeText(text);
+    elements.shareStatus.textContent = "Link copied. Anyone opening it will see this board.";
+  } catch {
+    const input = document.createElement("textarea");
+    input.value = text;
+    input.style.position = "fixed";
+    input.style.opacity = "0";
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand("copy");
+    input.remove();
+    elements.shareStatus.textContent = "Link copied. Anyone opening it will see this board.";
+  }
+
+  window.setTimeout(() => { elements.shareStatus.textContent = ""; }, 4000);
+}
+
+elements.playButton.addEventListener("click", () => setRunning(!running));
+elements.stepButton.addEventListener("click", () => { setRunning(false); step(); });
+elements.clearButton.addEventListener("click", clearBoard);
+elements.randomButton.addEventListener("click", randomizeBoard);
+elements.loadPatternButton.addEventListener("click", () => loadPattern(elements.patternSelect.value));
+elements.shareButton.addEventListener("click", copyShareLink);
+
+elements.speedRange.addEventListener("input", () => {
+  generationsPerSecond = Number(elements.speedRange.value);
+  elements.speedOutput.textContent = `${generationsPerSecond} generation${generationsPerSecond === 1 ? "" : "s"}/sec`;
+});
+
+elements.gridRange.addEventListener("input", () => {
+  elements.gridOutput.textContent = `${elements.gridRange.value} cells`;
+});
+
+elements.gridRange.addEventListener("change", () => {
+  columns = Number(elements.gridRange.value);
+  generation = 0;
+  canvas.dataset.columns = String(columns);
+  canvas.dataset.rows = String(rows);
+  board = createBoard(columns, rows);
+  resizeCanvas();
+});
+
+canvas.addEventListener("pointerdown", (event) => {
+  event.preventDefault();
+  canvas.setPointerCapture(event.pointerId);
+  drawing = true;
+  previousDrawnCell = null;
+  const cell = pointToCell(event);
+  if (!cell) return;
+  drawValue = event.button === 2 || event.shiftKey ? 0 : Number(!board[indexOf(cell.x, cell.y)]);
+  paintCell(event);
+});
+
+canvas.addEventListener("pointermove", (event) => {
+  if (!drawing) return;
+  event.preventDefault();
+  paintCell(event);
+});
+
+function stopDrawing() {
+  drawing = false;
+  previousDrawnCell = null;
+}
+
+canvas.addEventListener("pointerup", stopDrawing);
+canvas.addEventListener("pointercancel", stopDrawing);
+canvas.addEventListener("contextmenu", (event) => event.preventDefault());
+
+window.addEventListener("keydown", (event) => {
+  if (event.code === "Space" && !["INPUT", "SELECT", "BUTTON"].includes(document.activeElement.tagName)) {
+    event.preventDefault();
+    setRunning(!running);
+  }
+  if (event.key.toLowerCase() === "c" && !["INPUT", "SELECT"].includes(document.activeElement.tagName)) clearBoard();
+});
+
+new ResizeObserver(resizeCanvas).observe(canvas);
+
+let loadedSharedBoard = false;
+if (window.location.hash.length > 1) {
+  try {
+    loadedSharedBoard = decodeBoard(decodeURIComponent(window.location.hash.slice(1)));
+  } catch {
+    // Ignore invalid shared links.
+  }
+}
+
+if (!loadedSharedBoard) loadPattern("glider");
+requestAnimationFrame(animationLoop);
+
+  </script>
 </body>
 </html>
