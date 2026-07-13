@@ -461,6 +461,14 @@ footer {
   <script>
 "use strict";
 
+const AGE_COLORS = {
+  young: "#e9a7d5",
+  growing: "#e05198",
+  mature: "#ff9d2d",
+  old: "#81e9f0",
+  ancient: "#4778ff"
+};
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d", { alpha: false });
 
@@ -636,15 +644,15 @@ function draw() {
 
       const age = ageBoard[indexOf(x, y)];
       if (age < 3) {
-        ctx.fillStyle = "#e9a7d5";
+        ctx.fillStyle = AGE_COLORS.young;
       } else if (age < 8) {
-        ctx.fillStyle = "#e05198";
+        ctx.fillStyle = AGE_COLORS.growing;
       } else if (age < 15) {
-        ctx.fillStyle = "#ff9d2d";
+        ctx.fillStyle = AGE_COLORS.mature;
       } else if (age < 30) {
-        ctx.fillStyle = "#81e9f0";
+        ctx.fillStyle = AGE_COLORS.old;
       } else {
-        ctx.fillStyle = "#4778ff";
+        ctx.fillStyle = AGE_COLORS.ancient;
       }
 
       const inset = Math.max(0.7, Math.min(cellWidth, cellHeight) * 0.08);
