@@ -463,6 +463,7 @@ let populationHistory = [];
 let columns = Number(elements.gridRange.value);
 let rows = 36;
 let board = createBoard(columns, rows);
+let ageBoard = createBoard(columns, rows);
 let generation = 0;
 let running = false;
 let generationsPerSecond = Number(elements.speedRange.value);
@@ -554,11 +555,22 @@ function step() {
     }
   }
 
-  board = next;
-  generation += 1;
-  updateStats();
-  draw();
+for (let i = 0; i < board.length; i++) {
+  if (next[i]) {
+    if (board[i]) {
+      ageBoard[i] += 1;
+    } else {
+      ageBoard[i] = 1;
+    }
+  } else {
+    ageBoard[i] = 0;
+  }
 }
+
+board = next;
+generation += 1;
+updateStats();
+draw();
 
 function draw() {
   const width = canvas.clientWidth;
@@ -861,3 +873,4 @@ requestAnimationFrame(animationLoop);
   </script>
 </body>
 </html>
+}
