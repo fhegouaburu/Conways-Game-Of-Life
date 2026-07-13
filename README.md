@@ -29,3 +29,7 @@ Double-click `index.html`. The entire app is contained in that one file.
 ## Technology
 
 Vanilla HTML, CSS, and JavaScript. No framework, build command, backend, or installation is required.
+
+## Collaboration
+
+This project was developed collaboratively by me and my older sibling. We worked together on the design, implementation, and testing while building an interactive browser-based version of Conway's Game of Life.
