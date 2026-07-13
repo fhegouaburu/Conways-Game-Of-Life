@@ -228,6 +228,45 @@ select {
 .rules summary { color: var(--text); font-weight: 700; cursor: pointer; }
 .rules ol { margin-bottom: 0; padding-left: 20px; }
 .rules li + li { margin-top: 6px; }
+.color-guide {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 14px;
+}
+
+.color-guide li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.color-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.color-dot.young {
+  background: #69f0ae;
+}
+
+.color-dot.growing {
+  background: #43d17d;
+}
+
+.color-dot.mature {
+  background: #2db7ff;
+}
+
+.color-dot.old {
+  background: #9370db;
+}
+
+.color-dot.ancient {
+  background: #ffb347;
+}
 
 .board-card {
   position: relative;
