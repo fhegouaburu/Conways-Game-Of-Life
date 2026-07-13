@@ -512,6 +512,7 @@ function resizeCanvas() {
   }
 
   board = resized;
+  ageBoard = createBoard(columns, rows);
   canvas.dataset.columns = String(columns);
   canvas.dataset.rows = String(rows);
   cellWidth = rect.width / columns;
