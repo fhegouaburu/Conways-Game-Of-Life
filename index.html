@@ -250,23 +250,23 @@ select {
 }
 
 .color-dot.young {
-  background: #69f0ae;
+  background: #e9a7d5;
 }
 
 .color-dot.growing {
-  background: #43d17d;
+  background: #e05198;
 }
 
 .color-dot.mature {
-  background: #2db7ff;
+  background: #ff9d2d;
 }
 
 .color-dot.old {
-  background: #9370db;
+  background: #81e9f0;
 }
 
 .color-dot.ancient {
-  background: #ffb347;
+  background: #4778ff;
 }
 
 .board-card {
@@ -636,15 +636,15 @@ function draw() {
 
       const age = ageBoard[indexOf(x, y)];
       if (age < 3) {
-        ctx.fillStyle = "#69f0ae";
+        ctx.fillStyle = "#e9a7d5";
       } else if (age < 8) {
-        ctx.fillStyle = "#43d17d";
+        ctx.fillStyle = "#e05198";
       } else if (age < 15) {
-        ctx.fillStyle = "#2db7ff";
+        ctx.fillStyle = "#ff9d2d";
       } else if (age < 30) {
-        ctx.fillStyle = "#9370db";
+        ctx.fillStyle = "#81e9f0";
       } else {
-        ctx.fillStyle = "#ffb347";
+        ctx.fillStyle = "#4778ff";
       }
 
       const inset = Math.max(0.7, Math.min(cellWidth, cellHeight) * 0.08);
