@@ -4,7 +4,7 @@ An interactive browser-based implementation of Conway's Game of Life. Draw cells
 
 ## Play online
 
-https://fhegouaburu.github.io/conways-game-of-life/
+https://fhegouaburu.github.io/Conways-Game-Of-Life/
 
 ## Publish with GitHub Pages
 
